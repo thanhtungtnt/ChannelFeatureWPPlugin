@@ -1,49 +1,76 @@
 jQuery(document).ready(function($){
 	//Set width for each element .tntVideoItem
-	var tntMenuUl = $('li.toplevel_page_tnt_video_manage_page');
-	tntMenuUl.find('a[href*="tnt_video_edit_page"]').css('display', 'none');
-	tntMenuUl.find('a[href*="tnt_video_del_page"]').css('display', 'none');
-	tntMenuUl.find('a[href*="tnt_video_cat_edit_page"]').css('display', 'none');
-	tntMenuUl.find('a[href*="tnt_video_cat_del_page"]').css('display', 'none');
+	var tntMenuUl = $('li.toplevel_page_tnt_channel_manage_page');
+	tntMenuUl.find('a[href*="tnt_channel_edit_page"]').css('display', 'none');
+	tntMenuUl.find('a[href*="tnt_channel_del_page"]').css('display', 'none');
+	tntMenuUl.find('a[href*="tnt_channel_cat_edit_page"]').css('display', 'none');
+	tntMenuUl.find('a[href*="tnt_channel_cat_del_page"]').css('display', 'none');
 
-	var tntInfoVideoTable = '<table class="infoVideo borderDB form-table">';
-	tntInfoVideoTable += '<tbody><tr valign="top">';
-	tntInfoVideoTable += '<th scope="row"><label for="vTitle">Title</label></th>';
-	tntInfoVideoTable += '<td><input type="text" class="required" size="50" name="vTitle[]"></td>';
-	tntInfoVideoTable += '</tr>';
-	tntInfoVideoTable += '<tr valign="top">';
-	tntInfoVideoTable += '<th scope="row"><label for="vLink">Link</label></th>';
-	tntInfoVideoTable += '<td><input type="url" class="required" size="50" name="vLink[]"></td>';
-	tntInfoVideoTable += '</tr>';
-	tntInfoVideoTable += '<tr valign="top">';
-	tntInfoVideoTable += '<th scope="row"><label for="vStatus">Status</label></th>';
-	tntInfoVideoTable += '<td>';
-	tntInfoVideoTable += '<select name="vStatus[]">';
-	tntInfoVideoTable += '<option value="1">Published</option>';
-	tntInfoVideoTable += '<option value="0">Unpublished</option>';
-	tntInfoVideoTable += '</select>';
-	tntInfoVideoTable += '</td>';
-	tntInfoVideoTable += '</tr>';
-	tntInfoVideoTable += '<tr>';
-	tntInfoVideoTable += '<th scope="row"><label for="vOrder">Order Number</label></th>';
-	tntInfoVideoTable += '<td><input type="text" class="required digits" size="3" name="vOrder[]" value="100"></td>';
-	tntInfoVideoTable += '</tr>';
-	tntInfoVideoTable += '<tr>';
-	tntInfoVideoTable += '<th scope="row"></th>';
-	tntInfoVideoTable += '<td><a href="#" class="removeVideoItem button-secondary title="Remove Video Item">Remove</a></td>';
-	tntInfoVideoTable += '</tr>';
-	tntInfoVideoTable += '</tbody></table>';
+	var tntInfoChannel = '<tr>';
+	tntInfoChannel += '<td><input type="text" name="txtChannelNumber[]" placeholder="Channel Number" /></td>';
+	tntInfoChannel += '<td><input type="text" name="txtChannelName[]" placeholder="Channel Name" size="50"/></td>';
+	tntInfoChannel += '<td><input type="text" name="txtImgUrl[]" style="vertical-align: top;" /> <button class="set_custom_images button">Set Image ID</button> <img src="http://www.equaladventure.org/wp-content/themes/equal-adventure/images/default-thumbnail.jpg" alt="no thumbnail" width="100" ></td>';
+	tntInfoChannel += '</tr>';
 
 	var tntVideoMessageError = '<p>Errors! Please check again infos you enter <br />';
 	tntVideoMessageError += '- Video title is not empty <br />';
 	tntVideoMessageError += '- Video link is not empty and must be link format (ex: http://www.youtube.com/watch?v=9bZkp7q19f0) <br />';
 	tntVideoMessageError += '- Order is not empty and must be digits</p>';
 
-	$('.addMoreVideo').click(function(e){
+	$('.addMoreChannel').click(function(e){
 		e.preventDefault();
 		e.stopPropagation();
-		$('.infoVideoWrapper').append(tntInfoVideoTable);
+		$('.channelList tbody').append(tntInfoChannel);
+		return false;
 	});
+
+	jQuery(document).ready(function() {
+	    var $ = jQuery;
+	    if ($('.set_custom_images').length > 0) {
+	        if ( typeof wp !== 'undefined' && wp.media && wp.media.editor) {
+	            $(document).on('click', '.set_custom_images', function(e) {
+	                e.preventDefault();
+	                var button = $(this);
+	                var id = button.prev();
+	                var img = button.next();
+	                wp.media.editor.send.attachment = function(props, attachment) {
+	                    id.val(attachment.url);
+	                    img.attr("src",attachment.url);
+	                    img.attr("alt",attachment.title);
+	                };
+	                wp.media.editor.open(button);
+	                return false;
+	            });
+	        }
+	    }
+	});
+
+	$('.editChannel').click(function(e){
+		e.preventDefault();
+		console.log('edit works');
+	});
+
+	$('.deleteChannel').click(function(e){
+		e.preventDefault();
+		console.log('delete works');
+		var delDialog = $(this).next();
+		delDialog.dialog({
+	      resizable: false,
+	      height: "auto",
+	      width: 400,
+	      modal: true,
+	      buttons: {
+	        "Delete": function() {
+	          $(this).dialog("close");
+	          console.log($(this).html());
+	        },
+	        Cancel: function() {
+	          $( this ).dialog( "close" );
+	        }
+	      }
+	    });
+	});	
+
 
 	$('.removeVideoItem').live('click', function(){
 		$(this).parent().parent().parent().parent().remove();
@@ -122,24 +149,4 @@ jQuery(document).ready(function($){
 			}
 		}
 	});
-
-	if($("input.tntSocialFeature").is(":checked") == true)
-	{
-		$('.socialFeatureDetail').show();
-	}
-	else
-	{
-		$('.socialFeatureDetail').hide();	
-	}
-
-	$("input.tntSocialFeature").click(function(){
-		if($(this).is(":checked"))
-		{
-			$(this).parent().find('.socialFeatureDetail').show();
-		}
-		else
-		{
-			$(this).parent().find('.socialFeatureDetail').hide();	
-		}
-	})
 });	

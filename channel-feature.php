@@ -60,6 +60,40 @@ License: GPLv2
     require_once(TNT_INC_PATH . '/menus-view.php');
     require_once(TNT_INC_PATH . '/menus-process.php');
 
+
+    /**
+     * Add css to backend
+     */
+    add_action('admin_print_styles', 'tntAddBackEndCSS');
+    function tntAddBackEndCSS()
+    {
+        if (is_admin()) {
+            wp_enqueue_style('tntstyleAdmin', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css');  
+            wp_enqueue_style('tntstyleAdmin', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/theme.min.css');  
+            wp_enqueue_style('tntstyleAdmin', TNT_CSS_URL.'/admin.css');        
+        }
+    }
+
+    /**
+     * Add javascript to footer of backend
+     */
+    add_action('init', 'tntAddBackEndJS');
+    function tntAddBackEndJS() {
+        if (is_admin()) {
+            wp_enqueue_script('jquery-ui-dialog', 'jquery', '1.0', true);
+            wp_enqueue_script('tntscriptAdmin1', TNT_JS_URL.'/jquery.validate.js', false, '1.0', true);
+            wp_enqueue_script('tntscriptAdmin2', TNT_JS_URL.'/admin.js', false, '1.0', true);
+
+        }
+    }
+
+    add_action ( 'admin_enqueue_scripts', function () {
+        if (is_admin ())
+            wp_enqueue_media ();
+    } );
+
+
+
  //    /**
  //     * Shortcode
  //     */

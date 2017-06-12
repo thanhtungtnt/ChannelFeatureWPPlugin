@@ -23,10 +23,7 @@ function tnt_channel_manage(){
 				$tntChannels = TNT_Channel::tntGetChannels(array('channelCat' => $catID));
 				$items = count($tntChannels);
 
-
-				//Get Plugin Options
-				$tntOptions = get_option('tntVideoManageOptions');
-				$numLimit = $tntOptions['limitAdminPerPage']; 
+				$numLimit = 10; 
 				if($items > $numLimit) {
 			        $p = new TNT_Pagination();
 			        $p->items($items);
@@ -68,21 +65,7 @@ function tnt_channel_manage(){
 					</td>	
 				</tr>
 			</table>
-			<?php 
-				//show message
-				if(isset($_GET["m"]))
-				{
-					$m = $_GET["m"];
-					if($m) 
-					{
-						showMessage("Your video(s) updated successfully!", $m);
-					}
-					else
-					{
-						showMessage("Your video(s) updated failed!", $m);	
-					}	
-				}
-			 ?>
+			
 			<!-- List Video -->
 			<table class="tntTable widefat">
 				<thead>
@@ -91,6 +74,7 @@ function tnt_channel_manage(){
 						<th>ID</th>
 						<th>Channel Number</th>
 						<th>Name</th>
+						<th>Image</th>
 						<th>Category</th>
 						<th>Action</th>
 					</tr>
@@ -101,6 +85,7 @@ function tnt_channel_manage(){
 						<th>ID</th>
 						<th>Channel Number</th>
 						<th>Name</th>
+						<th>Image</th>
 						<th>Category</th>
 						<th>Action</th>
 					</tr>
@@ -110,16 +95,20 @@ function tnt_channel_manage(){
 						$tntChannels = TNT_Channel::tntGetChannels(array('channelCat' => $catID, 'limitText' => $limit, 'orderBy' => $orderBy, 'order' => $order));
 						foreach ($tntChannels as $tntV):
 					 ?>
-							<tr>
+							<tr id="channel<?php echo $tntV->channel_id;?>">
 								<td><input type="checkbox" name="tntChkVideos[]" class="tntSubChk" value="<?php echo $tntV->channel_id ?>" /></td>
-								<td><a href="<?php echo admin_url() ?>admin.php?page=tnt_channel_edit_page&videoID=<?php echo $tntV->channel_id; ?>"><b><?php echo $tntV->channel_id ?></b></a></td>
+								<td><?php echo $tntV->channel_id ?></td>
 								<td><?php echo $tntV->channel_number ?></td>
-								<td><b><a href="<?php echo admin_url() ?>admin.php?page=tnt_channel_edit_page&videoID=<?php echo $tntV->channel_id; ?>"><?php echo $tntV->channel_name ?></a></b></td>
+								<td><?php echo $tntV->channel_name ?></td>
+								<td><img src="<?php echo $tntV->channel_image;?>" alt="<?php echo $tntV->channel_name; ?>" width="100" /></td>
 								<td><?php echo $tntV->chcat_name ?></td>
-								
 								<td>
-									<a href="<?php echo admin_url() ?>admin.php?page=tnt_channel_edit_page&channelID=<?php echo $tntV->channel_id; ?>" class="button-secondary">Edit</a> 
-									<a href="<?php echo admin_url() ?>admin.php?page=tnt_channel_del_page&channelID=<?php echo $tntV->channel_id; ?>" class="button-secondary">Delete</a>
+									<a href="#" rel="<?php echo $tntV->channel_id ?>" class="editChannel button-secondary">Edit</a> 
+									<a href="#" rel="<?php echo $tntV->channel_id; ?>" class="deleteChannel button-secondary">Delete</a>
+									<div id="delDialog" style="display: none;">
+										<p>Are you sure?</p>
+										<input type="hidden" value="<?php echo $tntV->channel_id; ?>">
+									</div>
 								</td>
 							</tr>
 					 <?php endforeach ?>
@@ -182,80 +171,55 @@ function tnt_channel_manage(){
 }//tnt_channel_manage
 
 /**
- * Function to display the "add video" page
+ * Function to display the "Add Channel" page
  */
 function tnt_channel_add(){
 	?>
 		<div class="wrap">
 			<?php screen_icon('edit') ?>
-			<h2>Add Video</h2>
-			<?php 
-				//show message
-				if(isset($_GET["m"]))
-				{
-					$m = $_GET["m"];
-					if($m) 
-					{
-						showMessage("Your video(s) added successfully!", $m);
-					}
-					else
-					{
-						showMessage("Your video(s) added failed!", $m);	
-					}	
-				}
-			 ?>
+			<h2>Add Channel</h2>
 			<form id="addVideoForm" method="POST" action="">
 				<div id="message" class="errorContainer error dpn"></div>
 				<?php 
 					$currentUser = wp_get_current_user();
 				?>
 				<input type="hidden" name="vUserID" value="<?php echo $currentUser->ID; ?>" />
-				<table class="borderB form-table">
-					<tr valign="top">
-						<th scope="row"><label for="vCat">Select Category</label></th>
+				<table>
+					<tr>
+						<td>Select Category</td>
 						<td>
 							<?php echo TNT_ChannelCat::tntDisplayListCat(); ?>
 						</td>
-					</tr>
-				</table>
-				<div class="infoVideoWrapper">
-					<table class="infoVideo borderDB form-table">
-						<tr valign="top">
-							<th scope="row"><label for="vTitle">Title</label></th>
-							<td><input type="text" class="required" size="50" name="vTitle[]" /></td>
-						</tr>
-						<tr valign="top">
-							<th scope="row"><label for="vLink">Link</label></th>
-							<td><input type="url" class="required" size="50" name="vLink[]" /></td>
-						</tr>
-						<tr valign="top">
-							<th scope="row"><label for="vStatus">Status</label></th>
-							<td>
-								<select name="vStatus[]">
-									<option value="1">Published</option>
-									<option value="0">Unpublished</option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row"><label for="vOrder">Order Number</label></th>
-							<td><input type="text" class="required digits" size="3" name="vOrder[]" value="100" /></td>
-						</tr>
-						<tr>
-							<th scope="row"></th>
-							<td><a href="#" class="removeVideoItem button-secondary" title="Remove Video Item">Remove</a></td>
-						</tr>
-					</table>
-				</div>
-				<table class="form-table">
-					<tr valign="top">
-						<th scope="row"></th>
 						<td>
-							<input type="submit" name="tntAddVideo" value="Add Video" class="button-primary"/>
-							<button class="addMoreVideo button-secondary">Add More</button>
+							<input type="submit" name="tntAddChannel" value="Add Channel" class="button-primary"/>
+							<a href="#" class="addMoreChannel button-secondary">Add More</a>
 							<input type="submit" name="reset" value="Reset" class="button-secondary">
 						</td>
 					</tr>
+				</table>
+				<table class="channelList widefat">
+					<thead>
+					<tr>
+						<th width="20%">Channel Number</th>
+						<th width="40%">Name</th>
+						<th width="40%">Image</th>
+
+					</tr>
+					</thead>
+					<tfoot>
+						<tr>
+							<th>Channel Number</th>
+							<th>Name</th>
+							<th>Image</th>
+						</tr>
+					</tfoot>
+					<tbody>
+						<tr valign="top">
+							<td><input type="text" name="txtChannelNumber[]" placeholder="Channel Number" /></td>
+							<td><input type="text" name="txtChannelName[]" placeholder="Channel Name" size="50"/></td>
+							<td><input type="text" name="txtImgUrl[]" style="vertical-align: top;" /> <button class="set_custom_images button">Set Image ID</button> <img src="http://www.equaladventure.org/wp-content/themes/equal-adventure/images/default-thumbnail.jpg" alt="no thumbnail" width="100" ></td> 
+						</tr>
+					</tbody>	
 				</table>
 			</form>
 		</div>
@@ -323,7 +287,7 @@ function tnt_channel_cat_manager(){
 }//tnt_channel_cat_manager
 
 /**
- * Function to display the "add video category" page
+ * Function to display the "Add Channel category" page
  */
 function tnt_channel_cat_add(){
 	?>

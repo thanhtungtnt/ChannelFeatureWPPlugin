@@ -3,45 +3,80 @@
 	 * Process: Insert Video
 	 */
 
-	if(isset($_POST['tntAddVideo']))
+	if(isset($_POST['tntAddChannel']))
 	{
-		$videoCat 		= $_POST["vCat"];
-		$videoType 		= $_POST["vLinkType"];
-		$arrVideoTitle 	= $_POST["vTitle"]; 
-		$arrVideoLink 	= $_POST["vLink"];
-		$arrVideoStatus = $_POST["vStatus"];
-		$arrVideoOrder 	= $_POST["vOrder"];
-		$dateCreated 	= time();
-		$dateModified 	= time();
-		$userID 		= (int)$_POST['vUserID'];
+		$result = 1;
+		$cCat = $_POST["channelCat"];
+		$n = count($_POST["txtChannelNumber"]);
 
-		$countVideo = count($arrVideoTitle);
+		$arrChannelNumber = $_POST["txtChannelNumber"];
+		$arrChannelName = $_POST["txtChannelName"];
+		$arrChannelImage = $_POST["txtImgUrl"];
 
-		for($i=0; $i<$countVideo; $i++)
-		{
-			$v = new TNT_Video();
-			$v->videoTitle 	 = esc_html($arrVideoTitle[$i]);
-			$v->videoCat 	 = $videoCat;
-			$v->videoType 	 = $videoType;
-			$v->videoLink 	 = esc_url($arrVideoLink[$i]);
-			$v->videoStatus  = $arrVideoStatus[$i];
-			$v->videoOrder 	 = $arrVideoOrder[$i];
-			$v->dateCreated  = $dateCreated;
-			$v->dateModified = $dateModified;
-			$v->userID 		 = $userID;
-			$v->tntInsertVideo();
+		for($i=0; $i < $n; $i++){
+			$c = new TNT_Channel();
+			$c->channelName   = $arrChannelName[$i];
+			$c->channelCat    = $cCat;
+			$c->channelNumber = $arrChannelNumber[$i];
+			$c->channelImage  = $arrChannelImage[$i];
+			$check = $c->tntInsertChannel();
+			if($check == 0)
+			{
+				$result = 0;
+			}
 		}
-		
-		// if($v->tntInsertVideo())
-		// {
-		// 	$location = add_query_arg(array('m'=>1));
-		// }
-		// else
-		// {
-		// 	$location = add_query_arg(array('m'=>0));			
-		// }
+
+		if($result == 1){
+			$location = add_query_arg(array('m'=>1));
+		}
+		else{
+			$location = add_query_arg(array('m'=>0));
+		}
+
 		$location = add_query_arg(array('m'=>1));
 		Header("Location: $location");
+
+		// echo '<pre>';
+		// print_r($_POST);
+		// echo '</pre>';
+
+		// $videoCat 		= $_POST["vCat"];
+		// $videoType 		= $_POST["vLinkType"];
+		// $arrVideoTitle 	= $_POST["vTitle"]; 
+		// $arrVideoLink 	= $_POST["vLink"];
+		// $arrVideoStatus = $_POST["vStatus"];
+		// $arrVideoOrder 	= $_POST["vOrder"];
+		// $dateCreated 	= time();
+		// $dateModified 	= time();
+		// $userID 		= (int)$_POST['vUserID'];
+
+		// $countVideo = count($arrVideoTitle);
+
+		// for($i=0; $i<$countVideo; $i++)
+		// {
+		// 	$v = new TNT_Video();
+		// 	$v->videoTitle 	 = esc_html($arrVideoTitle[$i]);
+		// 	$v->videoCat 	 = $videoCat;
+		// 	$v->videoType 	 = $videoType;
+		// 	$v->videoLink 	 = esc_url($arrVideoLink[$i]);
+		// 	$v->videoStatus  = $arrVideoStatus[$i];
+		// 	$v->videoOrder 	 = $arrVideoOrder[$i];
+		// 	$v->dateCreated  = $dateCreated;
+		// 	$v->dateModified = $dateModified;
+		// 	$v->userID 		 = $userID;
+		// 	$v->tntInsertVideo();
+		// }
+		
+		// // if($v->tntInsertVideo())
+		// // {
+		// // 	$location = add_query_arg(array('m'=>1));
+		// // }
+		// // else
+		// // {
+		// // 	$location = add_query_arg(array('m'=>0));			
+		// // }
+		// $location = add_query_arg(array('m'=>1));
+		// Header("Location: $location");
 	}
 
 	
