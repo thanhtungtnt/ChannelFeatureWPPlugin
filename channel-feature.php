@@ -35,6 +35,8 @@ License: GPLv2
      */
     require_once(TNT_CLASS_PATH . '/channel.php');
     require_once(TNT_CLASS_PATH . '/channelcat.php');
+    require_once(TNT_CLASS_PATH . '/country.php');
+    require_once(TNT_CLASS_PATH . '/language.php');
     require_once(TNT_CLASS_PATH . '/pagination.php');
 
 
@@ -60,6 +62,11 @@ License: GPLv2
     require_once(TNT_INC_PATH . '/menus-view.php');
     require_once(TNT_INC_PATH . '/menus-process.php');
 
+    define("TNT_PLUG_URL", plugins_url()."/channel-feature");
+    define("TNT_IMG_URL", TNT_PLUG_URL."/images");
+    define("TNT_CSS_URL", TNT_PLUG_URL."/css");
+    define("TNT_JS_URL", TNT_PLUG_URL."/js");
+
 
     /**
      * Add css to backend
@@ -69,8 +76,8 @@ License: GPLv2
     {
         if (is_admin()) {
             wp_enqueue_style('tntstyleAdmin', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css');  
-            wp_enqueue_style('tntstyleAdmin', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/theme.min.css');  
-            wp_enqueue_style('tntstyleAdmin', TNT_CSS_URL.'/admin.css');        
+            wp_enqueue_style('tntstyleAdmin2', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/theme.min.css');  
+            wp_enqueue_style('tntstyleAdmin3', TNT_CSS_URL.'/admin.css');        
         }
     }
 
@@ -92,6 +99,21 @@ License: GPLv2
             wp_enqueue_media ();
     } );
 
+/**
+ * AJAX
+ */
+add_action('wp_ajax_tnt_ajax_delete_channel', 'tnt_ajax_delete_channel');
+add_action('wp_ajax_nopriv_tnt_ajax_delete_channel', 'tnt_ajax_delete_channel');
+function tnt_ajax_delete_channel(){
+    $channelID = $_REQUEST["cID"];
+
+    $tntC = new TNT_Channel();
+    $tntC->tntGetChannel($channelID);
+    $tntC->tntDeleteChannel();
+    
+    echo $channelID;
+    die();
+}
 
 
  //    /**

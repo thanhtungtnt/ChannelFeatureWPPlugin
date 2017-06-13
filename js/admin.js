@@ -7,9 +7,13 @@ jQuery(document).ready(function($){
 	tntMenuUl.find('a[href*="tnt_channel_cat_del_page"]').css('display', 'none');
 
 	var tntInfoChannel = '<tr>';
-	tntInfoChannel += '<td><input type="text" name="txtChannelNumber[]" placeholder="Channel Number" /></td>';
-	tntInfoChannel += '<td><input type="text" name="txtChannelName[]" placeholder="Channel Name" size="50"/></td>';
-	tntInfoChannel += '<td><input type="text" name="txtImgUrl[]" style="vertical-align: top;" /> <button class="set_custom_images button">Set Image ID</button> <img src="http://www.equaladventure.org/wp-content/themes/equal-adventure/images/default-thumbnail.jpg" alt="no thumbnail" width="100" ></td>';
+	tntInfoChannel += '<td class="cNumber"><input type="text" name="txtChannelNumber[]" placeholder="Number" /></td>';
+	tntInfoChannel += '<td class="cName"><input type="text" name="txtChannelName[]" placeholder="Name" /></td>';
+	tntInfoChannel += '<td class="cImage"><input type="hidden" name="txtImgUrl[]" style=" width:100px; vertical-align: top;" /> <button class="set_custom_images button">Choose</button> <img src="http://www.equaladventure.org/wp-content/themes/equal-adventure/images/default-thumbnail.jpg" alt="no thumbnail" width="100" ></td>';
+	tntInfoChannel += '<td class="cCat">'+ getListCat() +'</td>';
+	tntInfoChannel += '<td class="cCountry">'+ getListCountry() +'</td>';
+	tntInfoChannel += '<td class="cLanguage">'+ getListLanguage() +'</td>';
+	tntInfoChannel += '<td class="cAction"><a href="#" class="removeItem button-secondary">Remove</a></td>';
 	tntInfoChannel += '</tr>';
 
 	var tntVideoMessageError = '<p>Errors! Please check again infos you enter <br />';
@@ -24,6 +28,11 @@ jQuery(document).ready(function($){
 		return false;
 	});
 
+	$(document).on('click', '.removeItem', function(e){
+		e.preventDefault();
+		$(this).parent().parent().remove();
+	});
+
 	jQuery(document).ready(function() {
 	    var $ = jQuery;
 	    if ($('.set_custom_images').length > 0) {
@@ -34,7 +43,7 @@ jQuery(document).ready(function($){
 	                var id = button.prev();
 	                var img = button.next();
 	                wp.media.editor.send.attachment = function(props, attachment) {
-	                    id.val(attachment.url);
+	                    id.val(attachment.id);
 	                    img.attr("src",attachment.url);
 	                    img.attr("alt",attachment.title);
 	                };
@@ -47,22 +56,51 @@ jQuery(document).ready(function($){
 
 	$('.editChannel').click(function(e){
 		e.preventDefault();
-		console.log('edit works');
+		var tr = $(this).parent().parent();
+		var channelID       = tr.find('input.chnID').val();
+		var channelName     = tr.find('input.chnName').val();
+		var channelNumber   = tr.find('input.chnNumber').val();
+		var channelImage    = tr.find('input.chnImage').val();
+		var channelCat      = tr.find('input.chnCat').val();
+		var channelCountry  = tr.find('input.chnCountry').val();
+		var channelLanguage = tr.find('input.chnLang').val();
+
+		var cNumberHTML = '<input type="hidden" class="chnID" value="'+ channelID +'"> <input type="hidden" class="chnName" value="'+channelName+'"> <input type="hidden" class="chnNumber" value="'+channelNumber+'"> <input type="hidden" class="chnImage" value="'+channelImage+'"> <input type="hidden" class="chnCat" value="'+channelCat+'"> <input type="hidden" class="chnCountry" value="'+channelCountry+'"> <input type="hidden" class="chnLang" value="'+channelLanguage+'"><input type="text" name="txtChannelNumber" value="'+channelNumber+'" />';
+		var cNameHTML = '<input type="text" name="txtChannelName" value="'+ channelName +'" />';
+		var cImageHTML = '<input type="hidden" name="txtImgUrl[]" style=" width:100px; vertical-align: top;" /> <button class="set_custom_images button">Choose</button> <img src="'+getDefaultThumbnail()+'" alt="no thumbnail" width="100" >';
+		tr.find('td').eq(1).html(cNumberHTML);
+		tr.find('td').eq(2).html(cNameHTML);
+		tr.find('td').eq(3).html(cImageHTML);
+
+
 	});
 
 	$('.deleteChannel').click(function(e){
 		e.preventDefault();
 		console.log('delete works');
+		var channelID = $(this).attr("rel");
+		console.log(channelID);
 		var delDialog = $(this).next();
-		delDialog.dialog({
+		$('#delDialog').dialog({
 	      resizable: false,
 	      height: "auto",
 	      width: 400,
 	      modal: true,
 	      buttons: {
 	        "Delete": function() {
-	          $(this).dialog("close");
-	          console.log($(this).html());
+				$(this).dialog("close");
+				$('.tntTable #channel'+channelID).fadeOut();
+				$.ajax({
+				  url: 'http://setvnow.local/wp-admin/admin-ajax.php',
+				  dataType: 'json',
+				  data: {
+				      action: 'tnt_ajax_delete_channel',
+				      cID: channelID 
+				  },
+				  success: function(data){
+				      console.log(data);
+				  }
+				});
 	        },
 	        Cancel: function() {
 	          $( this ).dialog( "close" );

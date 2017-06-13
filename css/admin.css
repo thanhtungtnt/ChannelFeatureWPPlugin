@@ -1,5 +1,19 @@
 .dpn{display:none;}
 .dpb{display:block;}
+.channelList{}
+.channelList tr{}
+.channelList tr td{}
+.channelList tr td input[type=text]{width: 100%;}
+.channelList tr td select{width: 100%;}
+.channelList tr th{}
+
+.cNumber{width: 9%;}
+.cName{width: 16%;}
+.cImage{width: 18%;}
+.cCat{width: 14%}
+.cCountry{width:15%;}
+.cLanguage{width: 15%;}
+.cAction{width: 10%;}
 
 table.tntTable{}
 table.tntTable tr{}

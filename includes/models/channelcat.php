@@ -192,7 +192,7 @@ class TNT_ChannelCat {
     {
         $listCat = TNT_ChannelCat::tntGetCats();
         $view = "";
-        $view .= '<select name="channelCat">'; 
+        $view .= '<select class="sbChannel" name="sbChannelCat[]">'; 
         foreach ($listCat as $cat) {
             if($catID == $cat->chcat_id)
             {

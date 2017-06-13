@@ -18,7 +18,7 @@
 
 	    //Create submenu
 	    add_submenu_page('tnt_channel_manage_page', 'Add Channel', 'Add Channel', 'manage_options','tnt_channel_add_page', 'tnt_channel_add');
-
+	    add_submenu_page('tnt_channel_manage_page', 'Edit All Channel', 'Edit All Channel', 'manage_options','tnt_channel_editall_page', 'tnt_channel_editall');
 	    // add_submenu_page('tnt_video_setting_page', 'Video Settings', 'Video Settings', 'manage_options','tnt_video_setting_page', 'tnt_video_setting');
 	    add_submenu_page('tnt_channel_manage_page', 'Categories', 'Categories', 'manage_options', 'tnt_channel_cat_manager_page', 'tnt_channel_cat_manager');
 	    add_submenu_page('tnt_channel_manage_page', 'Add Category', 'Add Cateogry', 'manage_options', 'tnt_channel_cat_add_page', 'tnt_channel_cat_add');
