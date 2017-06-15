@@ -160,43 +160,50 @@ class TNT_Channel {
         $tableName2 = $wpdb->prefix."tnt_channel_cats";
         $tableName3 = $wpdb->prefix."tnt_country";
         $tableName4 = $wpdb->prefix."tnt_languages";
+        $where = "1=1";
+        $select = "$tableName1.channel_id, $tableName1.channel_name, $tableName1.channel_number, $tableName1.channel_cat, $tableName1.channel_image, $tableName1.channel_language, $tableName1.channel_country";
+        $from = $tableName1;
         
         $v = "";
         $sql = "";
-        $channelID       = (isset($args["channelID"])) ? $args["channelID"] : "0";
-        $channelCat      = (isset($args["channelCat"])) ? $args["channelCat"] : "0";
-        $channelNumber   = (isset($args["channelNumber"])) ? $args["channelNumber"] : "0";
-        $channelLanguage = (isset($args["channelLanguage"])) ? $args["channelLanguage"] : "0";
-        $channelCountry  = (isset($args["channelCountry"])) ? $args["channelCountry"] : "0";
-        $sql = "SELECT $tableName1.channel_id, $tableName1.channel_name, $tableName1.channel_number, $tableName1.channel_image, $tableName1.channel_language, $tableName1.channel_country, $tableName2.chcat_name, $tableName3.country_name, $tableName4.language_name
-                FROM $tableName1, $tableName2, $tableName3, $tableName4
-                WHERE $tableName1.channel_cat = $tableName2.chcat_id AND $tableName1.channel_country = $tableName3.id AND $tableName1.channel_language = $tableName4.id";
+        $channelID       = (isset($args["channelID"])) ? $args["channelID"] : 0;
+        $channelCat      = (isset($args["channelCat"])) ? $args["channelCat"] : 0;
+        $channelNumber   = (isset($args["channelNumber"])) ? $args["channelNumber"] : 0;
+        $channelCountry  = (isset($args["channelCountry"])) ? $args["channelCountry"] : 0;
+        $channelLanguage = (isset($args["channelLanguage"])) ? $args["channelLanguage"] : 0;
+        
+
+        if($channelCat != 0){
+            $select .= ", $tableName2.chcat_name";
+            $from .= ", $tableName2";
+            $where .= " AND $tableName1.channel_cat = $tableName2.chcat_id AND $tableName1.channel_cat = $channelCat";
+        }
+        if($channelCountry != 0){
+            $select .= ", $tableName3.country_name";
+            $from .= ", $tableName3";
+            $where .= " AND $tableName1.channel_country = $tableName3.id AND $tableName1.channel_country = $channelCountry";
+        }
+        if($channelLanguage != 0){
+            $select .= ", $tableName4.language_name";
+            $from .= ", $tableName4";
+            $where .= " AND $tableName1.channel_language = $tableName4.id AND $tableName1.channel_language = $channelLanguage";
+        }
+        
         if($keyword != null)
         {
-            $sql .= " AND $tableName1.channel_name like '%".$keyword."%'";
+            $where .= " AND $tableName1.channel_name like '%".$keyword."%'";
         }
         if($channelID != 0)
         {
-            $sql .= " AND $tableName1.channel_id = $channelID";
-        }
-        
-        if($channelCat != 0)
-        {
-            $sql .= " AND $tableName1.channel_cat = $channelCat";
+            $where .= " AND $tableName1.channel_id = $channelID";
         }
         
         if($channelNumber != 0)
         {
-            $sql .= " AND $tableName1.channel_number = $channelNumber";
+            $where .= " AND $tableName1.channel_number = $channelNumber";
         }
-        if($channelLanguage != 0)
-        {
-            $sql .= " AND $tableName1.channel_language = $channelLanguage";
-        }
-        if($channelCountry != 0)
-        {
-            $sql .= " AND $tableName1.channel_country = $channelCountry";
-        }
+        
+        $sql .= "SELECT $select FROM $from WHERE $where";
         
         $results = $wpdb->get_results($sql);
         return $results;

@@ -43,13 +43,14 @@ function tnt_channel_cat_manager(){
 										$channels = TNT_Channel::tntGetChannels(array('channelCat'=>$tntC->chcat_id)) ;
 										$channelsCount = count($channels);
 									?>
-									<b><a href="<?php echo admin_url() ?>admin.php?page=tnt_channel_manage_page&vCat=<?php echo $tntC->chcat_id; ?>"><?php echo $channelsCount ?></a></b>
+									<b><a href="<?php echo admin_url() ?>admin.php?page=tnt_channel_manage_page&sbChannelCat=<?php echo $tntC->chcat_id; ?>"><?php echo $channelsCount ?></a></b>
 								</td>
 								<td><?php echo $tntC->chcat_parent ?></td>
 								<td><?php echo '[tnt_channel_list id='.$tntC->chcat_id.']' ?></td>
 								<td>
 									<a href="<?php echo admin_url() ?>admin.php?page=tnt_channel_cat_edit_page&catID=<?php echo $tntC->chcat_id; ?>" class="button-secondary">Edit</a> 
 									<a href="<?php echo admin_url() ?>admin.php?page=tnt_channel_cat_del_page&catID=<?php echo $tntC->chcat_id; ?>" class="button-secondary">Delete</a>
+									<a href="<?php echo admin_url() ?>admin.php?page=tnt_channel_editall_page&sbChannelCat=<?php echo $tntC->chcat_id; ?>" class="button-secondary">Edit All Channels In This Category</a> 
 								</td>
 							</tr>
 					 <?php endforeach ?>

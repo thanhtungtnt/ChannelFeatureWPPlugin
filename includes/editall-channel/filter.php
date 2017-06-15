@@ -1,12 +1,12 @@
 <!-- Filter Feature -->
 <form action="" method="GET">
-<table width="100%" style="margin-bottom: 10px">
+<table width="100%" class="tableFilter">
 	<tr>
 		<td width="10%">
 			<?php 
-				$filterCat = 0;
-				$filterCountry = 0;
-				$filterLanguage = 0;
+				$filterCat = (isset($_GET["sbChannelCat"]) == true) ? $_GET["sbChannelCat"] : 0;
+				$filterCountry = (isset($_GET["sbCountry"]) == true) ? $_GET["sbCountry"] : 0;
+				$filterLanguage = (isset($_GET["sbLanguage"]) == true) ? $_GET["sbLanguage"] : 0;
 				$sortBy   = "";
 				$sortOrder = "";
 				if(isset($_GET["btnFilter"])){

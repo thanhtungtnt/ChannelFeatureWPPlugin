@@ -58,55 +58,31 @@ License: GPLv2
     define("TNT_IMG_URL", TNT_PLUG_URL."/images");
     define("TNT_CSS_URL", TNT_PLUG_URL."/css");
     define("TNT_JS_URL", TNT_PLUG_URL."/js");
-    /**
-     * Add css to backend
-     */
-    add_action('admin_print_styles', 'tntAddBackEndCSS');
-    function tntAddBackEndCSS()
-    {
-        if (is_admin()) {
-            wp_enqueue_style('tntstyleAdmin', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css');  
-            wp_enqueue_style('tntstyleAdmin2', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/theme.min.css');  
-            wp_enqueue_style('tntstyleAdmin3', TNT_CSS_URL.'/admin.css');        
-        }
-    }
-    /**
-     * Add javascript to footer of backend
-     */
-    add_action('init', 'tntAddBackEndJS');
-    function tntAddBackEndJS() {
-        if (is_admin()) {
-            wp_enqueue_script('jquery-ui-dialog', 'jquery', '1.1', true);
-            wp_enqueue_script('tntscriptAdmin1', TNT_JS_URL.'/jquery.validate.js', false, '1.1', true);
-            wp_enqueue_script('tntscriptAdmin2', TNT_JS_URL.'/admin.js', false, '1.2', true);
-        }
-    }
-    add_action ( 'admin_enqueue_scripts', function () {
-        if (is_admin ())
-            wp_enqueue_media ();
-    } );
-/**
- * AJAX
- */
-add_action('wp_ajax_tnt_ajax_delete_channel', 'tnt_ajax_delete_channel');
-add_action('wp_ajax_nopriv_tnt_ajax_delete_channel', 'tnt_ajax_delete_channel');
-function tnt_ajax_delete_channel(){
-    $channelID = $_REQUEST["cID"];
-    $tntC = new TNT_Channel();
-    $tntC->tntGetChannel($channelID);
-    $tntC->tntDeleteChannel();
     
-    echo $channelID;
-    die();
-}
- //    /**
- //     * Shortcode
- //     */
- //    require_once(TNT_INC_PATH . '/shortcode.php');
- //    /**
- //     * Template
- //     */
- //    require_once(TNT_INC_PATH . '/template.php');
+    /**
+     * AJAX
+     */
+    add_action('wp_ajax_tnt_ajax_delete_channel', 'tnt_ajax_delete_channel');
+    add_action('wp_ajax_nopriv_tnt_ajax_delete_channel', 'tnt_ajax_delete_channel');
+    function tnt_ajax_delete_channel(){
+        $channelID = $_REQUEST["cID"];
+        $tntC = new TNT_Channel();
+        $tntC->tntGetChannel($channelID);
+        $tntC->tntDeleteChannel();
+        
+        echo $channelID;
+        die();
+    }
+
+    /**
+     * Shortcode
+     */
+    require_once(TNT_INC_PATH . '/shortcode.php');
+    
+    /**
+     * Template
+     */
+    require_once(TNT_INC_PATH . '/template.php');
  //    /**
  //     * Options
  //     */
