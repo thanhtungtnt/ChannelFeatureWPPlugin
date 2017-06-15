@@ -8,15 +8,19 @@ function tnt_channel_editall(){
 			<?php screen_icon('upload') ?>
 			<h2>Edit All Channels</h2>
 			<hr />
+
+			<?php require_once(TNT_INC_PATH . '/editall-channel/filter.php'); ?>
+
 			<?php
-				//Get var filter
-				$catID = (isset($_GET["vCat"])) ? $_GET["vCat"] : 0;
-				$orderBy = (isset($_GET["orderBy"])) ? $_GET["orderBy"] : null;
-				$order = (isset($_GET["order"])) ? $_GET["order"] : null;
-
-				$tntChannels = TNT_Channel::tntGetChannelsNoCat();
+				$tntChannels = TNT_Channel::tntGetChannelsNoCat(array(
+					'channelCat'      => $filterCat,
+					'channelCountry'  => $filterCountry,
+					'channelLanguage' => $filterLanguage, 
+					'limitText'       => $limit, 
+					'orderBy'         => $sortBy, 
+					'order'           => $sortOrder
+				));
 				$items = count($tntChannels);
-
 				$numLimit = 50; 
 				if($items > $numLimit) {
 			        $p = new TNT_Pagination();
@@ -44,7 +48,6 @@ function tnt_channel_editall(){
 			<!-- Message -->
 			<div class='<?php echo ($items > 0) ? "updated" : "error" ?>'><p><?php echo $items ?> Result(s) found!</p></div>    
 			<!--End  Message -->
-
 			<form method="POST" action="">
 			<table width="100%" style="margin-bottom: 10px;">
 				<tr>
@@ -86,22 +89,28 @@ function tnt_channel_editall(){
 				</tfoot>
 				<tbody>
 					<?php 
-						$tntChannels = TNT_Channel::tntGetChannelsNoCat(array('channelCat' => $catID, 'limitText' => $limit, 'orderBy' => $orderBy, 'order' => $order));
+						$tntChannels = TNT_Channel::tntGetChannelsNoCat(array(
+							'channelCat'      => $filterCat,
+							'channelCountry'  => $filterCountry,
+							'channelLanguage' => $filterLanguage, 
+							'limitText'       => $limit, 
+							'orderBy'         => $sortBy, 
+							'order'           => $sortOrder
+						));
 						foreach ($tntChannels as $tntV):
 					 ?>
 							<tr id="channel<?php echo $tntV->channel_id;?>">
 								<td class="cNumber">
-									<a name="channel<?php echo $tntV->channel_id; ?>"></a>
 									<input type="hidden" name="txtChannelID[]" value="<?php echo $tntV->channel_id; ?>">
 									<input type="text" name="txtChannelNumber[]" placeholder="Number" value="<?php echo $tntV->channel_number; ?>" />
 								</td>
 								<td class="cName"><input type="text" name="txtChannelName[]" placeholder="Name" value="<?php echo $tntV->channel_name ?>" /></td>
 								<td class="cImage">
 									<?php 
-										$img = '<img src="'.TNT_IMG_URL.'/default-thumbnail.jpg" alt="No Image" />';
+										$img = '<img src="'.TNT_IMG_URL.'/default-thumbnail.jpg" alt="No Image" height="50" />';
 										if($tntV->channel_image != 0)
 										{
-											$img = wp_get_attachment_image($tntV->channel_image, array(100,100));	
+											$img = wp_get_attachment_image($tntV->channel_image, array(50,50));	
 										}
 									?>
 									<input type="hidden" name="txtImgUrl[]" style=" width:100px; vertical-align: top;" value="<?php echo $tntV->channel_image; ?>" /> <button class="set_custom_images button">Choose</button> <?php echo $img; ?>
@@ -118,7 +127,6 @@ function tnt_channel_editall(){
 				<p>Are you sure?</p>
 				<input type="hidden" value="<?php echo $tntV->channel_id; ?>">
 			</div>
-
 			<?php if ($items > $numLimit): ?>
 				<div class="tablenav">
 				    <div class='tablenav-pages'>
@@ -128,13 +136,11 @@ function tnt_channel_editall(){
 			<?php endif ?>
 			</form>
 		</div>
-
 		<script type="text/javascript">
 			jQuery(document).ready(function($){
 				//check if have any videos checked
 				$(".btnAct").click(function(e){
 					var rs = false;
-
 					$('.tntTable tr').each (function ()
 					{
 						var checkbox = $(this).find(".tntSubChk");
@@ -143,14 +149,12 @@ function tnt_channel_editall(){
 							rs = true;
 						}
 					});
-
 					if(rs === false)
 					{
 						alert("No Items checked");
 						e.preventDefault();	
 					}
 				});
-
 				$(".tntChkAll").click(function(){
 					if($(this).is(":checked"))
 					{
@@ -170,17 +174,14 @@ function tnt_channel_editall(){
 					}
 				});
 			});	
-
 			function getListCat(){
 				var html = '<?php echo TNT_ChannelCat::tntDisplayListCat(); ?>'; 
 				return html;
 			}
-
 			function getListCountry(){
 				var html = '<?php echo TNT_Country::tntDisplayListCountry(); ?>'; 
 				return html;
 			}
-
 			function getListLanguage(){
 				var html = '<?php echo TNT_Language::tntDisplayListLanguage(); ?>'; 
 				return html; 

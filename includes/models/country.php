@@ -29,7 +29,6 @@ class TNT_Country {
             return call_user_func(array($this, '_get_' . $property));
         }
     }
-
     public function __set($property, $value) {
         if (in_array($property, $this->_setters)) 
         {
@@ -50,7 +49,7 @@ class TNT_Country {
     public static function tntGetCountries($cID = 0)
     {
         global $wpdb;
-        $tableName = $wpdb->prefix."tnt_countries";
+        $tableName = $wpdb->prefix."tnt_country";
         $sql = "";
         if($cID == 0)
         {
@@ -67,7 +66,6 @@ class TNT_Country {
         $results = $wpdb->get_results($sql);
         return $results;
     }
-
     /**
      * Function: Get country by ID
      *
@@ -78,7 +76,7 @@ class TNT_Country {
     public function tntGetCountry($cID = 0)
     {
         global $wpdb;
-        $tableName = $wpdb->prefix."tnt_channel_cats";
+        $tableName = $wpdb->prefix."tnt_country";
         $sql = "";
         if($cID != 0)
         {
@@ -86,7 +84,6 @@ class TNT_Country {
                     FROM $tableName
                     WHERE id = $cID";
             $tntC = $wpdb->get_row($sql);
-
             $this->countryID   = $tntC->id;
             $this->countryCode = $tntC->country_code;
             $this->countryName = $tntC->country_name;
@@ -97,7 +94,6 @@ class TNT_Country {
             exit;
         }
     }
-
     /**
      * Display Countries List
      * @param   int     ID of country selected
@@ -108,6 +104,29 @@ class TNT_Country {
         $cList = TNT_Country::tntGetCountries();
         $view = "";
         $view .= '<select class="sbChannel" name="sbCountry[]">'; 
+        $view .= '<option value="0">Select Country</option>';
+        foreach ($cList as $c) {
+            $name = str_replace("'","\'",$c->country_name);
+            if($cID == $c->id)
+            {
+                $view .= '<option value="'.$c->id.'" selected>'.$name.'</option>';    
+            }
+            else
+            {
+                $view .= '<option value="'.$c->id.'">'.$name.'</option>';        
+            }
+            
+        }
+        $view .= '</select>'; 
+        return $view;
+    }
+
+    public static function tntDisplayListCountrySingle($cID=0)
+    {
+        $cList = TNT_Country::tntGetCountries();
+        $view = "";
+        $view .= '<select class="sbChannel" name="sbCountry">'; 
+        $view .= '<option value="0">Select Country</option>';
         foreach ($cList as $c) {
             $name = str_replace("'","\'",$c->country_name);
             if($cID == $c->id)
@@ -124,5 +143,4 @@ class TNT_Country {
         return $view;
     }
 }
-
 ?>

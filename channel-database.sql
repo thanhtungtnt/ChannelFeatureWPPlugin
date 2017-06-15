@@ -34,7 +34,7 @@ CREATE TABLE `wp_tnt_channel` (
   `channel_image` int(11) DEFAULT '0',
   `channel_country` int(11) DEFAULT '0',
   `channel_language` int(11) DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -555,7 +555,7 @@ ALTER TABLE `wp_tnt_languages`
 -- AUTO_INCREMENT for table `wp_tnt_channel`
 --
 ALTER TABLE `wp_tnt_channel`
-  MODIFY `channel_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `channel_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 --
 -- AUTO_INCREMENT for table `wp_tnt_channel_cats`
 --

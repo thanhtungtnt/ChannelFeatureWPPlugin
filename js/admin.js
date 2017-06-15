@@ -5,7 +5,6 @@ jQuery(document).ready(function($){
 	tntMenuUl.find('a[href*="tnt_channel_del_page"]').css('display', 'none');
 	tntMenuUl.find('a[href*="tnt_channel_cat_edit_page"]').css('display', 'none');
 	tntMenuUl.find('a[href*="tnt_channel_cat_del_page"]').css('display', 'none');
-
 	var tntInfoChannel = '<tr>';
 	tntInfoChannel += '<td class="cNumber"><input type="text" name="txtChannelNumber[]" placeholder="Number" /></td>';
 	tntInfoChannel += '<td class="cName"><input type="text" name="txtChannelName[]" placeholder="Name" /></td>';
@@ -15,7 +14,6 @@ jQuery(document).ready(function($){
 	tntInfoChannel += '<td class="cLanguage">'+ getListLanguage() +'</td>';
 	tntInfoChannel += '<td class="cAction"><a href="#" class="removeItem button-secondary">Remove</a></td>';
 	tntInfoChannel += '</tr>';
-
 	var tntVideoMessageError = '<p>Errors! Please check again infos you enter <br />';
 	tntVideoMessageError += '- Video title is not empty <br />';
 	tntVideoMessageError += '- Video link is not empty and must be link format (ex: http://www.youtube.com/watch?v=9bZkp7q19f0) <br />';
@@ -27,7 +25,6 @@ jQuery(document).ready(function($){
 		$('.channelList tbody').append(tntInfoChannel);
 		return false;
 	});
-
 	$(document).on('click', '.removeItem', function(e){
 		e.preventDefault();
 		$(this).parent().parent().remove();
@@ -64,15 +61,12 @@ jQuery(document).ready(function($){
 		var channelCat      = tr.find('input.chnCat').val();
 		var channelCountry  = tr.find('input.chnCountry').val();
 		var channelLanguage = tr.find('input.chnLang').val();
-
 		var cNumberHTML = '<input type="hidden" class="chnID" value="'+ channelID +'"> <input type="hidden" class="chnName" value="'+channelName+'"> <input type="hidden" class="chnNumber" value="'+channelNumber+'"> <input type="hidden" class="chnImage" value="'+channelImage+'"> <input type="hidden" class="chnCat" value="'+channelCat+'"> <input type="hidden" class="chnCountry" value="'+channelCountry+'"> <input type="hidden" class="chnLang" value="'+channelLanguage+'"><input type="text" name="txtChannelNumber" value="'+channelNumber+'" />';
 		var cNameHTML = '<input type="text" name="txtChannelName" value="'+ channelName +'" />';
 		var cImageHTML = '<input type="hidden" name="txtImgUrl[]" style=" width:100px; vertical-align: top;" /> <button class="set_custom_images button">Choose</button> <img src="'+getDefaultThumbnail()+'" alt="no thumbnail" width="100" >';
 		tr.find('td').eq(1).html(cNumberHTML);
 		tr.find('td').eq(2).html(cNameHTML);
 		tr.find('td').eq(3).html(cImageHTML);
-
-
 	});
 
 	$('.deleteChannel').click(function(e){
@@ -91,7 +85,7 @@ jQuery(document).ready(function($){
 				$(this).dialog("close");
 				$('.tntTable #channel'+channelID).fadeOut();
 				$.ajax({
-				  url: 'http://setvnow.local/wp-admin/admin-ajax.php',
+				  url: 'https://dev.setvnow.com/wp-admin/admin-ajax.php',
 				  dataType: 'json',
 				  data: {
 				      action: 'tnt_ajax_delete_channel',
@@ -108,12 +102,9 @@ jQuery(document).ready(function($){
 	      }
 	    });
 	});	
-
-
 	$('.removeVideoItem').live('click', function(){
 		$(this).parent().parent().parent().parent().remove();
 	});
-
 	$("#addVideoForm").validate();
 	var validator = $("#addVideoForm").bind("invalid-form.validate", function() {
 		$(".errorContainer").html(tntVideoMessageError);
@@ -123,7 +114,6 @@ jQuery(document).ready(function($){
 		errorElement: "em",
 		errorContainer: $(".errorContainer")
 	});
-
 	$('#editVideoForm').validate({
 		rules:{
 			vTitle: {
@@ -151,7 +141,6 @@ jQuery(document).ready(function($){
 			}
 		}
 	});
-
 	$('#editVideoCatForm').validate({
 		rules:{
 			catTitle : "required"
@@ -162,7 +151,6 @@ jQuery(document).ready(function($){
 			}
 		}
 	});
-
 	$('#optionVideoForm').validate({
 		rules:{
 			videoLimit:{

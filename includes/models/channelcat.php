@@ -29,7 +29,6 @@ class TNT_ChannelCat {
             return call_user_func(array($this, '_get_' . $property));
         }
     }
-
     public function __set($property, $value) {
         if (in_array($property, $this->_setters)) 
         {
@@ -73,7 +72,6 @@ class TNT_ChannelCat {
         }
         return $result;
     }
-
     /**
      * Function Update Channel Category
      *
@@ -107,7 +105,6 @@ class TNT_ChannelCat {
         }
         return $result;
     }
-
     /**
      * Function Delete Channel Category
      *
@@ -126,7 +123,6 @@ class TNT_ChannelCat {
         }
         return $result;
     }
-
     /**
      * Function: Get all cats
      *
@@ -153,7 +149,6 @@ class TNT_ChannelCat {
         $results = $wpdb->get_results($sql);
         return $results;
     }
-
     /**
      * Function: Get cat by ID
      *
@@ -182,7 +177,6 @@ class TNT_ChannelCat {
             exit;
         }
     }
-
     /**
      * Display List of Channel Category
      * @param   int     ID of category selected
@@ -193,6 +187,28 @@ class TNT_ChannelCat {
         $listCat = TNT_ChannelCat::tntGetCats();
         $view = "";
         $view .= '<select class="sbChannel" name="sbChannelCat[]">'; 
+        $view .= '<option value="0">Select Categories</option>';
+        foreach ($listCat as $cat) {
+            if($catID == $cat->chcat_id)
+            {
+                $view .= '<option value="'.$cat->chcat_id.'" selected>'.$cat->chcat_name.'</option>';    
+            }
+            else
+            {
+                $view .= '<option value="'.$cat->chcat_id.'">'.$cat->chcat_name.'</option>';        
+            }
+            
+        }
+        $view .= '</select>'; 
+        return $view;
+    }
+
+    public static function tntDisplayListCatSingle($catID = 0)
+    {
+        $listCat = TNT_ChannelCat::tntGetCats();
+        $view = "";
+        $view .= '<select class="sbChannel" name="sbChannelCat">'; 
+        $view .= '<option value="0">Select Categories</option>';
         foreach ($listCat as $cat) {
             if($catID == $cat->chcat_id)
             {
@@ -208,5 +224,4 @@ class TNT_ChannelCat {
         return $view;
     }
 }
-
 ?>

@@ -2,21 +2,17 @@
 	/**
 	 * Process: Insert Channel
 	 */
-
 	if(isset($_POST['tntAddChannel']))
 	{
 		$result = 1;
 		
-
 		$n = count($_POST["txtChannelNumber"]);
-
 		$arrChannelNumber = $_POST["txtChannelNumber"];
 		$arrChannelName   = $_POST["txtChannelName"];
 		$arrChannelImage  = $_POST["txtImgUrl"];
 		$arrCountry       = $_POST["sbCountry"];
 		$arrLanguage      = $_POST["sbLanguage"];
 		$arrCat           = $_POST["sbChannelCat"];
-
 		for($i=0; $i < $n; $i++){
 			$c = new TNT_Channel();
 			$c->channelName     = $arrChannelName[$i];
@@ -31,23 +27,21 @@
 				$result = 0;
 			}
 		}
-
 		if($result == 1){
 			$location = add_query_arg(array('m'=>1));
 		}
 		else{
 			$location = add_query_arg(array('m'=>0));
 		}
-
 		$location = add_query_arg(array('m'=>1));
 		Header("Location: $location");
 	}
+
 
 	if(isset($_POST['btnUpdateAll']))
 	{
 		$result = 1;
 		$n = count($_POST["txtChannelNumber"]);
-
 		$arrChannelID     = $_POST["txtChannelID"];
 		$arrChannelNumber = $_POST["txtChannelNumber"];
 		$arrChannelName   = $_POST["txtChannelName"];
@@ -55,7 +49,6 @@
 		$arrCountry       = $_POST["sbCountry"];
 		$arrLanguage      = $_POST["sbLanguage"];
 		$arrCat           = $_POST["sbChannelCat"];
-
 		for($i=0; $i < $n; $i++){
 			$c = new TNT_Channel();
 			$c->channelID       = $arrChannelID[$i];
@@ -71,14 +64,12 @@
 				$result = 0;
 			}
 		}
-
 		if($result == 1){
 			$location = add_query_arg(array('m'=>1));
 		}
 		else{
 			$location = add_query_arg(array('m'=>0));
 		}
-
 		$location = add_query_arg(array('m'=>1));
 		Header("Location: $location");
 	}
@@ -91,7 +82,6 @@
 		$videoID = $_POST["vID"];
 		$v = new TNT_Video();
 		$v->tntGetVideo($videoID);
-
 		$v->videoID 	 = $videoID;
 		$v->videoTitle 	 = esc_html($_POST["vTitle"]);
 		$v->videoCat 	 = $_POST["vCat"];
@@ -112,8 +102,6 @@
 		}
 		Header("Location: $location");
 	}
-
-
 	/**
 	 * Process: Delete Video (Click Yes)
 	 */
@@ -125,7 +113,6 @@
 		$v->tntDeleteVideo();
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Delete Video (Click No)
 	 */
@@ -134,15 +121,12 @@
 		$location = admin_url()."/admin.php?page=tnt_video_manage_page";
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Insert Video Type
 	 */
-
 	if(isset($_POST['tntAddVideoType']))
 	{
 		$t = new TNT_VideoType();
-
 		$t->videoTypeTitle 		= $_POST["typeTitle"];
 		
 		if($t->tntInsertVideoType())
@@ -155,7 +139,6 @@
 		}
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Edit Video Type
 	 */
@@ -166,7 +149,6 @@
 		$t->tntGetType($typeID);
 		
 		$t->videoTypeTitle 		= $_POST["typeTitle"];
-
 		if($t->tntUpdateVideoType() >= 0)
 		{
 			$location = add_query_arg(array('m'=>1));
@@ -175,10 +157,8 @@
 		{
 			$location = add_query_arg(array('m'=>0));	
 		}
-
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Delete Video Type (Click Yes)
 	 */
@@ -187,7 +167,6 @@
 		$location = admin_url()."/admin.php?page=tnt_video_type_manager_page";
 		$t = new TNT_VideoType();
 		$t->videoTypeID = $_POST["typeID"];
-
 		//Update status of videos have typeID deleted into 0 (unpubslished)
 		$args = array('typeID' => $t->videoTypeID);
 		$videos = TNT_Video::tntGetVideos($args);
@@ -202,7 +181,6 @@
 		}
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Delete Video Type (Click No)
 	 */
@@ -211,18 +189,14 @@
 		$location = admin_url()."/admin.php?page=tnt_video_type_manager_page";
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Insert Video Category
 	 */
-
 	if(isset($_POST['tntAddChannelCat']))
 	{
 		$c = new TNT_ChannelCat();
-
 		$c->chcatName   = $_POST["catTitle"];
 		$c->chcatParent = 0;
-
 		if($c->tntInsertChannelCat())
 		{
 			$location = add_query_arg(array('m'=>1));
@@ -233,7 +207,6 @@
 		}
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Edit Video Category
 	 */
@@ -255,7 +228,6 @@
 		}
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Delete Video Category (Click Yes)
 	 */
@@ -264,10 +236,9 @@
 		$location = admin_url()."/admin.php?page=tnt_channel_cat_manager_page";
 		$c = new TNT_ChannelCat();
 		$c->chcatID = $_POST["catID"];
-
 		$args = array('catID' => $c->chcatID);
 		$channels = TNT_Channel::tntGetChannels($args);
-		if($channels != null)
+		if($channels == null)
 		{
 			wp_die("This cat is having channels");
 		}
@@ -278,7 +249,6 @@
 		}
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Delete Video Category (Click No)
 	 */
@@ -287,7 +257,6 @@
 		$location = admin_url()."/admin.php?page=tnt_channel_cat_manager_page";
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Update Video Options
 	 */
@@ -309,7 +278,6 @@
 		$tntSocialFeatureG        = $_POST['tntSocialFeatureG'];
 		$tntSocialFeatureP        = $_POST['tntSocialFeatureP'];
 		$tntSocialFeatureIconSize = $_POST['tntSocialFeatureIconSize'];
-
 		if($videoLimit != "")
 		{
 			$videoOptions = array(
@@ -331,7 +299,6 @@
 				'socialFeatureIconSize' => $tntSocialFeatureIconSize
 			);
 			update_option('tntVideoManageOptions', $videoOptions);
-
 			$location = add_query_arg(array('m'=>1));
 		}
 		else
@@ -340,20 +307,15 @@
 		}
 		Header("Location: $location");
 	}
-
 	/**
 	 * Process: Update Action Selected
 	 */
 	if(isset($_POST['tntBtnAct']))
 	{
 		$tntVid = new TNT_Video();
-
 		$tntAction = $_POST["tntActions"]; 
-
 		$arrVideoID = $_POST["tntChkVideos"];
-
 		$tntResult = true;
-
 		switch($tntAction)
 		{
 			case 1 : 
@@ -400,7 +362,6 @@
 					}
 				}
 				break;
-
 			default: 
 				break;
 		}

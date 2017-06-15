@@ -8,15 +8,20 @@ function tnt_channel_manage(){
 			<?php screen_icon('upload') ?>
 			<h2>Channel Manager</h2>
 			<hr />
+
+			<?php require_once(TNT_INC_PATH . '/channel-manage/filter.php'); ?>
+
 			<?php
-				//Get var filter
-				$catID = (isset($_GET["vCat"])) ? $_GET["vCat"] : 0;
-				$orderBy = (isset($_GET["orderBy"])) ? $_GET["orderBy"] : null;
-				$order = (isset($_GET["order"])) ? $_GET["order"] : null;
+				$tntChannels = TNT_Channel::tntGetChannelsNoCat(array(
+					'channelCat'      => $filterCat,
+					'channelCountry'  => $filterCountry,
+					'channelLanguage' => $filterLanguage, 
+					'limitText'       => $limit, 
+					'orderBy'         => $sortBy, 
+					'order'           => $sortOrder
+				));
 
-				$tntChannels = TNT_Channel::tntGetChannelsNoCat();
 				$items = count($tntChannels);
-
 				$numLimit = 100; 
 				if($items > $numLimit) {
 			        $p = new TNT_Pagination();
@@ -73,7 +78,7 @@ function tnt_channel_manage(){
 				<thead>
 					<tr>
 						<td><input type="checkbox" name="tntChkAll" class="tntChkAll" /></td>
-						<th>Channel Number</th>
+						<th>Number</th>
 						<th>Name</th>
 						<th>Image</th>
 						<th>Category</th>
@@ -85,7 +90,7 @@ function tnt_channel_manage(){
 				<tfoot>
 					<tr>
 						<th></th>
-						<th>Channel Number</th>
+						<th>Number</th>
 						<th>Name</th>
 						<th>Image</th>
 						<th>Category</th>
@@ -96,7 +101,14 @@ function tnt_channel_manage(){
 				</tfoot>
 				<tbody>
 					<?php 
-						$tntChannels = TNT_Channel::tntGetChannelsNoCat(array('channelCat' => $catID, 'limitText' => $limit, 'orderBy' => $orderBy, 'order' => $order));
+						$tntChannels = TNT_Channel::tntGetChannelsNoCat(array(
+							'channelCat'      => $filterCat,
+							'channelCountry'  => $filterCountry,
+							'channelLanguage' => $filterLanguage, 
+							'limitText'       => $limit, 
+							'orderBy'         => $sortBy, 
+							'order'           => $sortOrder
+						));
 						foreach ($tntChannels as $tntV):
 					 ?>
 							<tr id="channel<?php echo $tntV->channel_id;?>">
@@ -107,10 +119,10 @@ function tnt_channel_manage(){
 								<td><?php echo $tntV->channel_name ?></td>
 								<td>
 									<?php 
-										$img = '<img src="'.TNT_IMG_URL.'/default-thumbnail.jpg" alt="No Image" />';
+										$img = '<img src="'.TNT_IMG_URL.'/default-thumbnail.jpg" alt="No Image" width="50" height="50" />';
 										if($tntV->channel_image != 0)
 										{
-											$img = wp_get_attachment_image($tntV->channel_image, array(100,100));	
+											$img = wp_get_attachment_image($tntV->channel_image, array(9999,50));
 										}
 										echo $img;
 									?>
@@ -159,13 +171,11 @@ function tnt_channel_manage(){
 			</div>
 			</form>
 		</div>
-
 		<script type="text/javascript">
 			jQuery(document).ready(function($){
 				//check if have any videos checked
 				$(".btnAct").click(function(e){
 					var rs = false;
-
 					$('.tntTable tr').each (function ()
 					{
 						var checkbox = $(this).find(".tntSubChk");
@@ -174,14 +184,12 @@ function tnt_channel_manage(){
 							rs = true;
 						}
 					});
-
 					if(rs === false)
 					{
 						alert("No Items checked");
 						e.preventDefault();	
 					}
 				});
-
 				$(".tntChkAll").click(function(){
 					if($(this).is(":checked"))
 					{
@@ -201,17 +209,14 @@ function tnt_channel_manage(){
 					}
 				});
 			});	
-
 			function getListCat(){
 				var html = '<?php echo TNT_ChannelCat::tntDisplayListCat(); ?>'; 
 				return html;
 			}
-
 			function getListCountry(){
 				var html = '<?php echo TNT_Country::tntDisplayListCountry(); ?>'; 
 				return html;
 			}
-
 			function getListLanguage(){
 				var html = '<?php echo TNT_Language::tntDisplayListLanguage(); ?>'; 
 				return html; 

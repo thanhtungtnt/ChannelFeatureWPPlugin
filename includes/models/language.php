@@ -29,7 +29,6 @@ class TNT_Language {
             return call_user_func(array($this, '_get_' . $property));
         }
     }
-
     public function __set($property, $value) {
         if (in_array($property, $this->_setters)) 
         {
@@ -67,7 +66,6 @@ class TNT_Language {
         $results = $wpdb->get_results($sql);
         return $results;
     }
-
     /**
      * Function: Get language by ID
      *
@@ -86,7 +84,6 @@ class TNT_Language {
                     FROM $tableName
                     WHERE id = $cID";
             $tntC = $wpdb->get_row($sql);
-
             $this->languageID   = $tntC->id;
             $this->languageCode = $tntC->language_code;
             $this->languageName = $tntC->language_name;
@@ -97,7 +94,6 @@ class TNT_Language {
             exit;
         }
     }
-
     /**
      * Display Languages List
      * @param   int     ID of language selected
@@ -108,6 +104,28 @@ class TNT_Language {
         $cList = TNT_Language::tntGetLanguages();
         $view = "";
         $view .= '<select class="sbChannel" name="sbLanguage[]">'; 
+        $view .= '<option value="0">Select Language</option>';
+        foreach ($cList as $c) {
+            if($cID == $c->id)
+            {
+                $view .= '<option value="'.$c->id.'" selected>'.$c->language_name.'</option>';    
+            }
+            else
+            {
+                $view .= '<option value="'.$c->id.'">'.$c->language_name.'</option>';        
+            }
+            
+        }
+        $view .= '</select>'; 
+        return $view;
+    }
+
+    public static function tntDisplayListLanguageSingle($cID=0)
+    {
+        $cList = TNT_Language::tntGetLanguages();
+        $view = "";
+        $view .= '<select class="sbChannel" name="sbLanguage">'; 
+        $view .= '<option value="0">Select Language</option>';
         foreach ($cList as $c) {
             if($cID == $c->id)
             {
@@ -123,5 +141,4 @@ class TNT_Language {
         return $view;
     }
 }
-
 ?>

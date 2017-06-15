@@ -37,7 +37,6 @@ class TNT_Channel {
             return call_user_func(array($this, '_get_' . $property));
         }
     }
-
     public function __set($property, $value) {
         if (in_array($property, $this->_setters)) 
         {
@@ -59,7 +58,7 @@ class TNT_Channel {
     {
         $result = "";        
         global $wpdb;
-        $tableName = $wpdb->prefix."tnt_channel";
+        $tableName = $wpdb->prefix."tnt_channels";
         if($this->channelName == "")
         {
             $result = 0;
@@ -89,7 +88,6 @@ class TNT_Channel {
         }
         return $result;
     }
-
     /**
      * Function Update Channel
      *
@@ -100,7 +98,7 @@ class TNT_Channel {
     {
         $result = "";        
         global $wpdb;
-        $tableName = $wpdb->prefix."tnt_channel";
+        $tableName = $wpdb->prefix."tnt_channels";
         if($this->channelName == "")
         {
             $result = false;
@@ -131,7 +129,6 @@ class TNT_Channel {
         }
         return $result;
     }
-
     /**
      * Function Delete Channel
      *
@@ -142,28 +139,26 @@ class TNT_Channel {
     {
         $result = false;        
         global $wpdb;
-        $tableName = $wpdb->prefix."tnt_channel";
+        $tableName = $wpdb->prefix."tnt_channels";
         if($this->channelID != 0)
         {
-            $sql = "DELETE FROM $tableName WHERE channel_id = $this->channelID";
+            $sql = "DELETE FROM $tableName WHERE channel_id = ".$this->channelID;
             $result = $wpdb->query($sql);    
         }
         return $result;
     }
-
     /**
      * Function: Get Channels by channelID, channelCat, channelNumber, or all
      *
      * @param   array     $args     $args('channelID' => $channelID, 'channelCat' => $channelCat, 'channelNumber' => $channelNumber)
      * @return  object              List of channels
      */
-
     public static function tntGetChannels($args = null, $keyword = null)
     {
         global $wpdb;
-        $tableName1 = $wpdb->prefix."tnt_channel";
+        $tableName1 = $wpdb->prefix."tnt_channels";
         $tableName2 = $wpdb->prefix."tnt_channel_cats";
-        $tableName3 = $wpdb->prefix."tnt_countries";
+        $tableName3 = $wpdb->prefix."tnt_country";
         $tableName4 = $wpdb->prefix."tnt_languages";
         
         $v = "";
@@ -173,16 +168,13 @@ class TNT_Channel {
         $channelNumber   = (isset($args["channelNumber"])) ? $args["channelNumber"] : "0";
         $channelLanguage = (isset($args["channelLanguage"])) ? $args["channelLanguage"] : "0";
         $channelCountry  = (isset($args["channelCountry"])) ? $args["channelCountry"] : "0";
-
         $sql = "SELECT $tableName1.channel_id, $tableName1.channel_name, $tableName1.channel_number, $tableName1.channel_image, $tableName1.channel_language, $tableName1.channel_country, $tableName2.chcat_name, $tableName3.country_name, $tableName4.language_name
                 FROM $tableName1, $tableName2, $tableName3, $tableName4
                 WHERE $tableName1.channel_cat = $tableName2.chcat_id AND $tableName1.channel_country = $tableName3.id AND $tableName1.channel_language = $tableName4.id";
-
         if($keyword != null)
         {
             $sql .= " AND $tableName1.channel_name like '%".$keyword."%'";
         }
-
         if($channelID != 0)
         {
             $sql .= " AND $tableName1.channel_id = $channelID";
@@ -197,12 +189,10 @@ class TNT_Channel {
         {
             $sql .= " AND $tableName1.channel_number = $channelNumber";
         }
-
         if($channelLanguage != 0)
         {
             $sql .= " AND $tableName1.channel_language = $channelLanguage";
         }
-
         if($channelCountry != 0)
         {
             $sql .= " AND $tableName1.channel_country = $channelCountry";
@@ -211,27 +201,33 @@ class TNT_Channel {
         $results = $wpdb->get_results($sql);
         return $results;
     }
-
     public static function tntGetChannelsNoCat($args = null, $keyword = null)
     {
         global $wpdb;
-        $limit   = (isset($args["limitText"])) ? $args["limitText"] : "";
-        $orderby = (isset($args["orderBy"])) ? $args["orderBy"] : "0";
-        $order   = (isset($args["order"])) ? $args["order"] : "0";
-
-        $tableName1 = $wpdb->prefix."tnt_channel";
+        $channelCat      = (isset($args["channelCat"])) ? $args["channelCat"] : 0;
+        $channelCountry  = (isset($args["channelCountry"])) ? $args["channelCountry"] : 0;
+        $channelLanguage = (isset($args["channelLanguage"])) ? $args["channelLanguage"] : 0;
+        $limit           = (isset($args["limitText"])) ? $args["limitText"] : "";
+        $orderby         = (isset($args["orderBy"])) ? $args["orderBy"] : "";
+        $order           = (isset($args["order"])) ? $args["order"] : "";
+        $tableName1      = $wpdb->prefix."tnt_channels";
         
+        $sql = "SELECT channel_id, channel_name, channel_cat, channel_number, channel_image, channel_language, channel_country FROM wp_tnt_channels WHERE 1=1";
 
-        $sql = "SELECT channel_id, channel_name, channel_cat, channel_number, channel_image, channel_language, channel_country
-                FROM $tableName1";
-        if($orderby != 0)
+        if($channelCat != 0){
+            $sql .= " AND channel_cat = ".$channelCat;
+        }
+        if($channelCountry != 0){
+            $sql .= " AND channel_cat = ".$channelCountry;
+        }
+        if($channelLanguage != 0){
+            $sql .= " AND channel_cat = ".$channelLanguage;
+        }
+        if($orderby != "")
         {
             $sql .= " ORDER BY $orderby $order";
         }
-        else{
-            $sql .= " ORDER BY channel_number ASC";
-        }
-
+        
         if($limit != ""){
             $sql .= " $limit";
         }
@@ -239,7 +235,6 @@ class TNT_Channel {
         $results = $wpdb->get_results($sql);
         return $results;
     }
-
     /**
      * Function: Get channel by ID
      *
@@ -250,7 +245,7 @@ class TNT_Channel {
     public function tntGetChannel($channelID = 0)
     {
         global $wpdb;
-        $tableName = $wpdb->prefix."tnt_channel";
+        $tableName = $wpdb->prefix."tnt_channels";
         $sql = "";
         if($channelID != 0)
         {
@@ -272,5 +267,4 @@ class TNT_Channel {
         }
     }
 }
-
 ?>
